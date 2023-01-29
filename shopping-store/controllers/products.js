@@ -31,16 +31,42 @@ const _ = require("lodash");
 const getProducts = asyncHandler(async (req, res) => {
     try {
         const { search, price, sort, select, page, limit, featured, rating } = req.query;
-        const limiter = page || limit ? (limit || 4) : "";
 
-        let pipeline = [];
+        let pipeline = [
+            {
+                $unwind: {
+                    path: "$sellingBranch",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: "branches",
+                    let: { "branchId": { $toObjectId: "$sellingBranch" } },
+                    pipeline: [
+                        { "$match": { "$expr": { "$eq": ["$_id", "$$branchId"] } } },
+                        { "$project": { "_id": 0, "__v": 0 } }
+                    ],
+                    as: "sellingBranch"
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    name: { $first: "$name" },
+                    sellingBranch: { $push: "$sellingBranch" },
+                }
+            }
+        ];
 
-        if(page || limit) {
-            if(page) {
+        if (page || limit) {
+            const limiter = page || limit ? (limit || 4) : "";
+
+            if (page) {
                 const paginationStage = { $skip: page * limiter };
                 pipeline.push(paginationStage);
             }
-            
+
             const limitStage = { $limit: Number(limiter) };
             pipeline.push(limitStage);
         }
@@ -84,7 +110,7 @@ const getProductById = asyncHandler(async (req, res) => {
     try {
         const response = await Product.findById(req.params.id);
         res.json({ response });
-    } catch(e) {
+    } catch (e) {
         console.error(e);
         res.json({ message: e });
     }
@@ -140,7 +166,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
 
     Product.findOneAndUpdate({ _id: req.params.id }, { $set: updatedProduct }, { new: true, runValidators: true })
-        .then(response => res.json({ response, message: "Product added successfully!" }))
+        .then(response => res.json({ response, message: "Product updated successfully!" }))
         .catch(error => res.json({ error, message: "Error occurred while adding product" }))
 });
 

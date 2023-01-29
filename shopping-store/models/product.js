@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema({
             message: "We didn't sell products of {VALUE}."
         }
     },
-    branches: {
+    sellingBranch: {
         type: Array,
         required: true
     }
