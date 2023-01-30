@@ -54,13 +54,20 @@ const getProducts = asyncHandler(async (req, res) => {
                 $group: {
                     _id: "$_id",
                     name: { $first: "$name" },
-                    sellingBranch: { $push: "$sellingBranch" },
+                    price: { $first: "$price" },
+                    featured: { $first: "$featured" },
+                    rating: { $first: "$rating" },
+                    company: { $first: "$company" },
+                    sellingBranch: { $push: { $first: "$sellingBranch" } },
                 }
-            }
+            },
+            {
+                $sort: { "_id": 1 }
+            },
         ];
 
         if (page || limit) {
-            const limiter = page || limit ? (limit || 4) : "";
+            const limiter = limit || 4;
 
             if (page) {
                 const paginationStage = { $skip: page * limiter };
