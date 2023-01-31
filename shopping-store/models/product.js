@@ -9,22 +9,23 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    featured: {
-        type: Boolean,
-        default: false
-    },
     rating: {
         type: Number,
         max: [5, "Rating should be between 0-5"]
     },
+    featured: {
+        type: Boolean,
+        default: false
+    },
     company: {
         type: String,
+        required: true,
         enum: {
             values: ["apple", "samsung", "mi", "motrolla", "oppo", "dell", "hp"],
             message: "We didn't sell products of {VALUE}."
         }
     },
-    sellingBranch: {
+    sellingBranches: {
         type: Array,
         required: true
     }

@@ -35,19 +35,19 @@ const getProducts = asyncHandler(async (req, res) => {
         let pipeline = [
             {
                 $unwind: {
-                    path: "$sellingBranch",
+                    path: "$sellingBranches",
                     preserveNullAndEmptyArrays: true
                 }
             },
             {
                 $lookup: {
                     from: "branches",
-                    let: { "branchId": { $toObjectId: "$sellingBranch" } },
+                    let: { "branchId": { $toObjectId: "$sellingBranches" } },
                     pipeline: [
                         { "$match": { "$expr": { "$eq": ["$_id", "$$branchId"] } } },
                         { "$project": { "_id": 0, "__v": 0 } }
                     ],
-                    as: "sellingBranch"
+                    as: "sellingBranches"
                 }
             },
             {
@@ -58,7 +58,7 @@ const getProducts = asyncHandler(async (req, res) => {
                     featured: { $first: "$featured" },
                     rating: { $first: "$rating" },
                     company: { $first: "$company" },
-                    sellingBranch: { $push: { $first: "$sellingBranch" } },
+                    sellingBranches: { $push: { $first: "$sellingBranches" } },
                 }
             },
             {
@@ -129,11 +129,23 @@ const getProductsStats = asyncHandler(async (req, res) => {
             {
                 $group: {
                     _id: "$company",
-                    count: { $sum: 1 },
-                    averageRating: { $avg: "$rating" },
+                    numberOfProducts: { $sum: 1 },
                     averagePrice: { $avg: "$price" },
-                    expensive: { $max: { price: "$price", name: "$name", featured: "$featured" } },
-                    cheapest: { $min: { price: "$price", name: "$name", featured: "$featured" } },
+                    averageRating: { $avg: "$rating" },
+                    expensive: {
+                        $max: {
+                            price: "$price",
+                            name: "$name",
+                            sellingBranches: { $size: "$sellingBranches" }
+                        }
+                    },
+                    cheapest: {
+                        $min: {
+                            price: "$price",
+                            name: "$name",
+                            sellingBranches: { $size: "$sellingBranches" }
+                        }
+                    },
                 }
             },
             {
@@ -144,43 +156,61 @@ const getProductsStats = asyncHandler(async (req, res) => {
     }
     catch (e) {
         console.error(e);
+        res.json({ message: e });
     }
 });
 
 const createProduct = asyncHandler(async (req, res) => {
-    const product = new Product({
-        name: req.body.name,
-        price: req.body.price,
-        featured: req.body.featured,
-        rating: req.body.rating,
-        company: req.body.company,
-        branches: req.body.branches
-    });
+    try {
+        const product = new Product({
+            name: req.body.name,
+            price: req.body.price,
+            featured: req.body.featured,
+            rating: req.body.rating,
+            company: req.body.company,
+            sellingBranches: req.body.sellingBranches
+        });
 
-    product.save()
-        .then(() => res.json({ message: "Product added successfully!" }))
-        .catch(error => res.json({ error, message: "Error occurred while adding product" }))
+        await product.save();
+        res.json({ message: "Product added successfully!" });
+    } catch (e) {
+        console.error(e);
+        res.json({ message: e });
+    }
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-    const updatedProduct = {
-        name: req.body.name,
-        price: req.body.price,
-        featured: req.body.featured,
-        rating: req.body.rating,
-        company: req.body.company,
-        branches: req.body.branches
-    }
+    try {
+        const updatedProduct = {
+            name: req.body.name,
+            price: req.body.price,
+            featured: req.body.featured,
+            rating: req.body.rating,
+            company: req.body.company,
+            sellingBranches: req.body.sellingBranches
+        }
 
-    Product.findOneAndUpdate({ _id: req.params.id }, { $set: updatedProduct }, { new: true, runValidators: true })
-        .then(response => res.json({ response, message: "Product updated successfully!" }))
-        .catch(error => res.json({ error, message: "Error occurred while adding product" }))
+        const response = await Product.findOneAndUpdate(
+            { _id: req.params.id },
+            { $set: updatedProduct },
+            { new: true, runValidators: true }
+        );
+
+        res.json({ response, message: "Product updated successfully!" })
+    } catch (e) {
+        console.error(e);
+        res.json({ message: e });
+    }
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-    Product.findByIdAndDelete(req.params.id)
-        .then(() => res.json({ message: "Product deleted successfully!" }))
-        .catch(error => res.json({ error, message: "Error occurred while deleting product" }))
+    try {
+        await Product.findByIdAndDelete(req.params.id)
+        res.json({ message: "Product deleted successfully!" });
+    } catch (e) {
+        console.error(e);
+        res.json({ message: e });
+    }
 });
 
 module.exports = { getProducts, getProductById, getProductsStats, createProduct, updateProduct, deleteProduct };
