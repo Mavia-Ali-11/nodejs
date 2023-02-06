@@ -1,4 +1,3 @@
-const { response } = require("express");
 const asyncHandler = require("express-async-handler");
 const { Branch } = require("../models");
 
@@ -31,4 +30,33 @@ const getBranches = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { createBranch, getBranches };
+const getBranchProducts = asyncHandler(async (req, res) => {
+    try {
+
+        const pipeline = [
+            {
+                $lookup: {
+                    from: "products",
+                    let: { branchId: { $toString: "$_id" } },
+                    pipeline: [
+                        {
+                            $match: { $expr: { $in: ["$$branchId", "$sellingBranches"] } },
+                        },
+                        {
+                            $project: { sellingBranches: 0 }
+                        }
+                    ],
+                    as: "sellingProducts"
+                }
+            }
+        ]
+
+        const response = await Branch.aggregate(pipeline);
+        res.json({ response });
+    } catch (e) {
+        console.error(e);
+        res.json({ message: e });
+    }
+});
+
+module.exports = { createBranch, getBranches, getBranchProducts };

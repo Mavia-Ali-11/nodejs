@@ -44,8 +44,8 @@ const getProducts = asyncHandler(async (req, res) => {
                     from: "branches",
                     let: { "branchId": { $toObjectId: "$sellingBranches" } },
                     pipeline: [
-                        { "$match": { "$expr": { "$eq": ["$_id", "$$branchId"] } } },
-                        { "$project": { "_id": 0, "__v": 0 } }
+                        { $match: { $expr: { $eq: ["$_id", "$$branchId"] } } },
+                        { $project: { "_id": 0, "__v": 0 } }
                     ],
                     as: "sellingBranches"
                 }
