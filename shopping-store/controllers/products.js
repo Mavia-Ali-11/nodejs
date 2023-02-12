@@ -173,7 +173,7 @@ const createProduct = asyncHandler(async (req, res) => {
         });
         if(req.files) {
             for(const file of req.files) {
-                product[file.fieldname] = file.filename + Date.now() + file.originalname;
+                product[file.fieldname] = file.filename;
             }
         }
 
