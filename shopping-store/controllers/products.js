@@ -58,6 +58,7 @@ const getProducts = asyncHandler(async (req, res) => {
                     featured: { $first: "$featured" },
                     rating: { $first: "$rating" },
                     company: { $first: "$company" },
+                    image: { $first: "$image" },
                     sellingBranches: { $push: { $first: "$sellingBranches" } },
                 }
             },
@@ -170,6 +171,11 @@ const createProduct = asyncHandler(async (req, res) => {
             company: req.body.company,
             sellingBranches: req.body.sellingBranches
         });
+        if(req.files) {
+            for(const file of req.files) {
+                product[file.fieldname] = file.filename + Date.now() + file.originalname;
+            }
+        }
 
         await product.save();
         res.json({ message: "Product added successfully!" });

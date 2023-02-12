@@ -25,6 +25,9 @@ const productSchema = new mongoose.Schema({
             message: "We didn't sell products of {VALUE}."
         }
     },
+    image: {
+        type: String
+    },
     sellingBranches: {
         type: Array,
         required: true

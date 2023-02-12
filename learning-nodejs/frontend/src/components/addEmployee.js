@@ -11,7 +11,7 @@ function AddEmployee() {
     const imageInpRef = useRef();
     const imagePreviewRef = useRef();
     const formRef = useRef();
-    const BASE_URL = 'http://localhost:3000/';
+    const BASE_URL = 'http://localhost:8000/';
 
     useEffect(() => {
         if (location.state) {

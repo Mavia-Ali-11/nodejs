@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 function AllEmployees() {
 
   const [employees, setEmployees] = useState();
-  const BASE_URL = 'http://localhost:3000/';
+  const BASE_URL = 'http://localhost:8080/';
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +16,7 @@ function AllEmployees() {
   }, []);
 
   const getEmployees = async () => {
-    const { data } = await axios.get(BASE_URL + 'api/employee');
+    const { data } = await axios.get(BASE_URL + 'api/product');
     setEmployees(data.response);
   }
 

@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: `${__dirname}/../uploads` });
+
 const {
     getProducts,
     getProductById,
@@ -12,7 +15,7 @@ const {
 router.get("/", getProducts);
 router.get("/stats", getProductsStats);
 router.get("/:id", getProductById);
-router.post("/", createProduct);
+router.post("/", upload.any(), createProduct);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 

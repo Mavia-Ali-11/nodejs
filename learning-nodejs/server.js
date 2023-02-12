@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     console.log('Server is running on port', PORT);
 });
@@ -42,7 +42,7 @@ if (process.env.NODE_ENV == "production") {
 
 const cors = require('cors');
 const corsOptions = {
-    origin: 'https://mavia-nodejs.herokuapp.com',
+    origin: 'http://localhost:3000',
     credentials: true,
     optionSuccessStatus: 200
 }
