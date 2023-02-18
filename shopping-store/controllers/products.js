@@ -89,7 +89,7 @@ const getProducts = asyncHandler(async (req, res) => {
             ];
         }
         if (price) matchStage.$match.price = { $lte: Number(price) };
-        if (featured) matchStage.$match.featured = featured === "true" || false;
+        if (featured) matchStage.$match.featured = featured === "true";
         if (rating) matchStage.$match.rating = { $gte: Number(rating) };
         pipeline.push(matchStage);
 
@@ -194,6 +194,11 @@ const updateProduct = asyncHandler(async (req, res) => {
             rating: req.body.rating,
             company: req.body.company,
             sellingBranches: req.body.sellingBranches
+        }
+        if(req.files) {
+            for(const file of req.files) {
+                updatedProduct[file.fieldname] = file.filename; 
+            }
         }
 
         const response = await Product.findOneAndUpdate(

@@ -1,3 +1,5 @@
 const Product = require("./product");
 const Branch = require("./branch");
-module.exports = { Product, Branch };
+const User = require("./user");
+
+module.exports = { Product, Branch, User };
