@@ -12,8 +12,7 @@ const userSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        unique: true,
-        validate: [validator.isEmail, "Must be a valid email: johndoe@gmail.com"]
+        // validate: [validator.isEmail, "Must be a valid email: johndoe@gmail.com"]
     },
     phoneNumber: {
         type: String,
@@ -24,7 +23,9 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Password is required"],
         minlength: 8
-    }
+    },
+    verificationOtp: String,
+    isVerified: Boolean
 });
 
 const User = mongoose.model("User", userSchema);
