@@ -1,3 +1,4 @@
 const upload = require("./upload");
+const roles = require("./roles");
 
-module.exports = { upload };
+module.exports = { upload, roles };

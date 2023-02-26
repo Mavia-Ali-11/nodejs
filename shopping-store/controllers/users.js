@@ -38,6 +38,7 @@ const signupUser = asyncHandler(async (req, res) => {
         }
 
         res.status(201).json({
+            otp: req.body.verificationOtp,
             message: "Enter the OTP sent on your phone to verify account."
         });
     }
@@ -73,6 +74,7 @@ const loginUser = asyncHandler(async (req, res) => {
         );
 
         res.status(200).json({
+            otp,
             message: "Enter the OTP sent on your phone to verify its you."
         }).end();
 
@@ -107,6 +109,7 @@ const verifyUser = asyncHandler(async (req, res) => {
                     lastname: user.lastname,
                     email: user.email,
                     phoneNumber: user.phoneNumber,
+                    role: user.role
                 },
                 process.env.SECRET,
                 { expiresIn: process.env.JWT_EXPIRES }
@@ -114,13 +117,18 @@ const verifyUser = asyncHandler(async (req, res) => {
         }
 
         res.status(200).json(response);
-    }
-    catch (e) {
+    } catch (e) {
         res.status(400).json({ message: e });
     }
 });
 
+const getUsers = asyncHandler(async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.status(200).json({ count: users.length, users });
+    } catch (e) {
+        res.status(400).json({ message: e });
+    }
+});
 
-
-
-module.exports = { signupUser, verifyUser, loginUser };
+module.exports = { signupUser, loginUser, verifyUser, getUsers };

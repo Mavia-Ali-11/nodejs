@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        // validate: [validator.isEmail, "Must be a valid email: johndoe@gmail.com"]
+        validate: [validator.isEmail, "Must be a valid email: johndoe@gmail.com"]
     },
     phoneNumber: {
         type: String,
@@ -23,6 +23,14 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Password is required"],
         minlength: 8
+    },
+    role: {
+        type: String,
+        enum: {
+            values: ["user", "sadmin", "dealer", "manager"],
+            message: "Role can't be {VALUE}"
+        },
+        default: "user"
     },
     verificationOtp: String,
     isVerified: Boolean
