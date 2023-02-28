@@ -3,6 +3,7 @@ const { User } = require("../models");
 const bcrypt = require("bcryptjs");
 const randomString = require("randomstring");
 const jwt = require("jsonwebtoken");
+const { emailSender } = require("../utils");
 
 const signupUser = asyncHandler(async (req, res) => {
     try {
@@ -50,7 +51,6 @@ const signupUser = asyncHandler(async (req, res) => {
         else res.status(400).json({ message: e });
     }
 });
-
 
 const loginUser = asyncHandler(async (req, res) => {
     try {
@@ -114,6 +114,12 @@ const verifyUser = asyncHandler(async (req, res) => {
                 process.env.SECRET,
                 { expiresIn: process.env.JWT_EXPIRES }
             );
+
+            await emailSender({
+                email: "maviaali597@gmail.com",
+                subject: "You were logged in at Plex store app",
+                message: "You were logged in at Plex store app recently. If this was not you, logout?"
+            });
         }
 
         res.status(200).json(response);
