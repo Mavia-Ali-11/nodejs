@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 
 dotenv.config();
+mongoose.set('strictQuery', false);
 
 // Routes for API
 mongoose.connect(process.env.DB_URL, {
