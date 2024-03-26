@@ -16,10 +16,23 @@ const getRestaurantsMeta = asyncHandler(async (req, res) => {
 });
 
 // 5. Write a MongoDB query to display all the restaurant which is in the borough Bronx.
+// 6. Write a MongoDB query to display the first 5 restaurant which is in the borough Bronx.
 const getBoroughSpecific = asyncHandler(async (req, res) => {
-    const data = await Restaurant.find({ borough: "Bronx" })
+    const data = await Restaurant.find({ borough: "Bronx" }).limit(5);
+
+    // 7. Write a MongoDB query to display the next 5 restaurants after skipping first 5 which are in the borough Bronx.
+    // const data = await Restaurant.find({ borough: "Bronx" }).skip(5).limit(5);
+
     return res.json({ count: data.length, data }).end();
 });
 
+// 8. Write a MongoDB query to find the restaurants who achieved a score more than 90.
+const getRestaurantAgainstScores = asyncHandler(async (req, res) => {
+    // const data = await Restaurant.find({ "grades.score": { $gt: req.params.score } });
 
-module.exports = { getAllRestaurants, getRestaurantsMeta, getBoroughSpecific };
+    // 9. Write a MongoDB query to find the restaurants that achieved a score, more than 80 but less than 100.
+    const data = await Restaurant.find({ grades: { $elemMatch: { score: { $gt: req.params.score, $lt: 100 } } } });
+    return res.json({ count: data.length, data }).end();
+});
+
+module.exports = { getAllRestaurants, getRestaurantsMeta, getBoroughSpecific, getRestaurantAgainstScores };
