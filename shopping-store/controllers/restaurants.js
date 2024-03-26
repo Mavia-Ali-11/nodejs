@@ -31,7 +31,15 @@ const getRestaurantAgainstScores = asyncHandler(async (req, res) => {
     // const data = await Restaurant.find({ "grades.score": { $gt: req.params.score } });
 
     // 9. Write a MongoDB query to find the restaurants that achieved a score, more than 80 but less than 100.
-    const data = await Restaurant.find({ grades: { $elemMatch: { score: { $gt: req.params.score, $lt: 100 } } } });
+    const data = await Restaurant.find({
+        grades: {
+            $elemMatch: {
+                score: {
+                    $gt: req.params.score, $lt: 100
+                }
+            }
+        }
+    });
     return res.json({ count: data.length, data }).end();
 });
 
