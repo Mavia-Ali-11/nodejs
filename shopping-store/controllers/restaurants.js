@@ -39,7 +39,7 @@ const getRestaurantAgainstScores = asyncHandler(async (req, res) => {
                 }
             }
         }
-    });
+    }, { "grades.$": 1 });
     return res.json({ count: data.length, data }).end();
 });
 
