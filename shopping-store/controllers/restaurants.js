@@ -27,7 +27,7 @@ const getBoroughSpecific = asyncHandler(async (req, res) => {
 });
 
 // 8. Write a MongoDB query to find the restaurants who achieved a score more than 90.
-const getRestaurantAgainstScores = asyncHandler(async (req, res) => {
+const getAgainstScores = asyncHandler(async (req, res) => {
     // const data = await Restaurant.find({ "grades.score": { $gt: req.params.score } });
 
     // 9. Write a MongoDB query to find the restaurants that achieved a score, more than 80 but less than 100.
@@ -40,7 +40,60 @@ const getRestaurantAgainstScores = asyncHandler(async (req, res) => {
             }
         }
     }, { "grades.$": 1 });
+
     return res.json({ count: data.length, data }).end();
 });
 
-module.exports = { getAllRestaurants, getRestaurantsMeta, getBoroughSpecific, getRestaurantAgainstScores };
+
+// 10. Write a MongoDB query to find the restaurants which locate in latitude value less than -95.754168.
+const getAgainstLocation = asyncHandler(async (req, res) => {
+    // const data = await Restaurant.find({ "address.coord.0": { $lt: -95.754168 } }).select("address.$");
+
+    // (Practice). Write a MongoDB query to find the restaurants where either latitude or longitude value less than -95.754168.
+    // const data = await Restaurant.find({ "address.coord": { $lt: -81 } }).select("address.$");
+
+    // 11. Write a MongoDB query to find the restaurants that do not prepare any cuisine of 'American' and their grade score more than 70 and latitude less than -65.754168.
+    // const data = await Restaurant.find({
+    //     cuisine: { $ne: "American" },
+    //     "grades.score": { $gt: 70 },
+    //     "address.coord.0": { $lt: -65.754168 }
+    // });
+
+    // 12. Write a MongoDB query to find the restaurants which do not prepare any cuisine of 'American' and achieved a score more than 70 and located in the longitude less than -65.754168.
+    // const data = await Restaurant.find({
+    //     cuisine: { $ne: "American" },
+    //     "grades.score": { $gt: 70 },
+    //     "address.coord.1": { $lt: -65.754168 }
+    // });
+
+    // 13. Write a MongoDB query to find the restaurants which do not prepare any cuisine of 'American' and achieved a grade point 'A' not belongs to the borough Brooklyn. The document must be displayed according to the cuisine in descending order.
+    const data = await Restaurant.find({
+        cuisine: { $ne: "American" },
+        "grades.grade": "A",
+        borough: { $ne: "Brooklyn" }
+    }).sort("-cuisine");
+
+    return res.json({ count: data.length, data }).end();
+});
+
+// 14. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which contain 'Wil' as first three letters for its name.
+
+const getAgainstSearch = asyncHandler(async (req, res) => {
+    // const data = await Restaurant.find({ name: /^Wil/ })
+    //     .select("-_id restaurant_id name borough cuisine");
+
+    // 15. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which contain 'ces' as last three letters for its name.
+    const data = await Restaurant.find({ name: /ces$/ })
+        .select("-_id restaurant_id name borough cuisine");
+
+    return res.json({ count: data.length, data }).end();
+});
+
+module.exports = {
+    getAllRestaurants,
+    getRestaurantsMeta,
+    getBoroughSpecific,
+    getAgainstScores,
+    getAgainstLocation,
+    getAgainstSearch
+};
