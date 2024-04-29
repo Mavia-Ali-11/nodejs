@@ -77,14 +77,46 @@ const getAgainstLocation = asyncHandler(async (req, res) => {
 });
 
 // 14. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which contain 'Wil' as first three letters for its name.
-
 const getAgainstSearch = asyncHandler(async (req, res) => {
     // const data = await Restaurant.find({ name: /^Wil/ })
     //     .select("-_id restaurant_id name borough cuisine");
 
     // 15. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which contain 'ces' as last three letters for its name.
-    const data = await Restaurant.find({ name: /ces$/ })
+    // const data = await Restaurant.find({ name: /ces$/ })
+    //     .select("-_id restaurant_id name borough cuisine");
+
+    // 16. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which contain 'Reg' as three letters somewhere in its name.
+    const data = await Restaurant.find({ name: /Reg/ })
         .select("-_id restaurant_id name borough cuisine");
+
+    return res.json({ count: data.length, data }).end();
+});
+
+// 17. Write a MongoDB query to find the restaurants which belong to the borough Bronx and prepared either American or Chinese dish.
+const getAgainstRandomOptions = asyncHandler(async (req, res) => {
+    // const data = await Restaurant.find({
+    //     borough: "Bronx",
+    //     $or: [
+    //         { cuisine: "American" },
+    //         { cuisine: "Chinese" }
+    //     ]
+    // });
+
+    // 18. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which belong to the borough Staten Island or Queens or Bronx or Brooklyn.
+    // const data = await Restaurant.find({
+    //     borough: { $in: ["Staten Island", "Queens", "Bronx", "Brooklyn"] }
+    // })
+    //     .select("-_id restaurant_id name borough cuisine");
+
+    // 19. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which are not belonging to the borough Staten Island or Queens or Bronx or Brooklyn.
+    // const data = await Restaurant.find({
+    //     borough: { $nin: ["Staten Island", "Queens", "Bronx", "Brooklyn"] }
+    // })
+    //     .select("-_id restaurant_id name borough cuisine");
+
+    // 20. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which achieved a score which is not more than 10.
+    const data = await Restaurant.find({ "grades.score": { $not: { $gt: 10 } } })
+        .select("-_id restaurant_id name borough cuisine grades.score");
 
     return res.json({ count: data.length, data }).end();
 });
@@ -95,5 +127,6 @@ module.exports = {
     getBoroughSpecific,
     getAgainstScores,
     getAgainstLocation,
-    getAgainstSearch
+    getAgainstSearch,
+    getAgainstRandomOptions
 };
