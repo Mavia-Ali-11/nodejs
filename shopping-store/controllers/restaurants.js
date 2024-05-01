@@ -115,11 +115,22 @@ const getAgainstRandomOptions = asyncHandler(async (req, res) => {
     //     .select("-_id restaurant_id name borough cuisine");
 
     // 20. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which achieved a score which is not more than 10.
-    const data = await Restaurant.find({ "grades.score": { $not: { $gt: 10 } } })
+    // const data = await Restaurant.find({ "grades.score": { $not: { $gt: 10 } } })
+    //     .select("-_id restaurant_id name borough cuisine grades.score");
+
+    // 21. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which prepared dish except 'American' and 'Chinees' or restaurant's name begins with letter 'Wil'.
+    const data = await Restaurant.find({
+        $or: [
+            { cuisine: { $nin: ["American", "Chinees"] } },
+            { name: /Wil/ }
+        ]
+    })
         .select("-_id restaurant_id name borough cuisine grades.score");
 
     return res.json({ count: data.length, data }).end();
 });
+
+
 
 module.exports = {
     getAllRestaurants,
