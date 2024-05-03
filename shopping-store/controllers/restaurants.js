@@ -119,16 +119,37 @@ const getAgainstRandomOptions = asyncHandler(async (req, res) => {
     //     .select("-_id restaurant_id name borough cuisine grades.score");
 
     // 21. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which prepared dish except 'American' and 'Chinees' or restaurant's name begins with letter 'Wil'.
+    // const data = await Restaurant.find({
+    //     $or: [
+    //         { cuisine: { $nin: ["American", "Chinees"] } },
+    //         { name: /^Wil/ }
+    //     ]
+    // })
+    //     .select("-_id restaurant_id name borough cuisine grades.score");
+
+    // 22. Write a MongoDB query to find the restaurant Id, name, and grades for those restaurants which achieved a grade of "A" and scored 11 on an ISODate "2014-08-11T00:00:00Z" among many of survey dates.
+    // const data = await Restaurant.find({
+    //     grades: {
+    //         $elemMatch: {
+    //             grade: "A",
+    //             score: 11,
+    //             date: new Date("2014-08-11T00:00:00Z")
+    //         }
+    //     }
+    // })
+    //     .select("-_id restaurant_id name grades");
+
+    // 23. Write a MongoDB query to find the restaurant Id, name and grades for those restaurants where the 2nd element of grades array contains a grade of "A" and score 9 on an ISODate "2014-08-11T00:00:00Z"
     const data = await Restaurant.find({
-        $or: [
-            { cuisine: { $nin: ["American", "Chinees"] } },
-            { name: /Wil/ }
-        ]
+        "grades.1.grade": "A",
+        "grades.1.score": 9,
+        "grades.1.date": new Date("2014-08-11T00:00:00Z")
     })
-        .select("-_id restaurant_id name borough cuisine grades.score");
+        .select("-_id restaurant_id name grades");
 
     return res.json({ count: data.length, data }).end();
 });
+
 
 
 
