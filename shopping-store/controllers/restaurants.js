@@ -183,8 +183,11 @@ const getAgainstConditions = asyncHandler(async (req, res) => {
     //     .select("-_id  name borough cuisine address.coord");
 
     // 32. Write a MongoDB query to find the restaurant name, borough, longitude and latitude and cuisine for those restaurants which contain 'Mad' as first three letters of its name. (search text should be dynamic)
-    const data = await Restaurant.find({ name: { $regex: "^" + req.query.search } })
-        .select("-_id  name borough cuisine address.coord");
+    // const data = await Restaurant.find({ name: { $regex: "^" + req.query.search } })
+    //     .select("-_id  name borough cuisine address.coord");
+
+    // 33. Write a MongoDB query to find the restaurants that have at least one grade with a score of less than 5.
+    const data = await Restaurant.find({ "grades.score": { $lt: 5 } });
 
     return res.json({ count: data.length, data }).end();
 });
