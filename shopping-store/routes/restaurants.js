@@ -7,7 +7,8 @@ const {
     getAgainstScores,
     getAgainstLocation,
     getAgainstSearch,
-    getAgainstRandomOptions
+    getAgainstRandomOptions,
+    getAgainstSortedOrder
 } = require("../controllers/restaurants");
 
 router.get("/", getAllRestaurants);
@@ -17,5 +18,6 @@ router.get("/score/:score", getAgainstScores);
 router.get("/location", getAgainstLocation);
 router.get("/search", getAgainstSearch);
 router.get("/random-search", getAgainstRandomOptions);
+router.get("/sort", getAgainstSortedOrder);
 
 module.exports = router;
