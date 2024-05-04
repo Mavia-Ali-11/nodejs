@@ -189,6 +189,11 @@ const getAgainstConditions = asyncHandler(async (req, res) => {
     // 33. Write a MongoDB query to find the restaurants that have at least one grade with a score of less than 5.
     const data = await Restaurant.find({ "grades.score": { $lt: 5 } });
 
+    // 34, 35, 36 are kind of similar to previous ones
+
+
+
+
     return res.json({ count: data.length, data }).end();
 });
 
