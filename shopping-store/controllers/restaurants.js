@@ -140,18 +140,19 @@ const getAgainstRandomOptions = asyncHandler(async (req, res) => {
     //     .select("-_id restaurant_id name grades");
 
     // 23. Write a MongoDB query to find the restaurant Id, name and grades for those restaurants where the 2nd element of grades array contains a grade of "A" and score 9 on an ISODate "2014-08-11T00:00:00Z"
-    const data = await Restaurant.find({
-        "grades.1.grade": "A",
-        "grades.1.score": 9,
-        "grades.1.date": new Date("2014-08-11T00:00:00Z")
-    })
-        .select("-_id restaurant_id name grades");
+    // const data = await Restaurant.find({
+    //     "grades.1.grade": "A",
+    //     "grades.1.score": 9,
+    //     "grades.1.date": new Date("2014-08-11T00:00:00Z")
+    // })
+    //     .select("-_id restaurant_id name grades");
+
+    // 24. Write a MongoDB query to find the restaurant Id, name, address and geographical location for those restaurants where 2nd element of coord array contains a value which is more than 42 and upto 52.
+    const data = await Restaurant.find({ "address.coord.1": { $gte: 43, $lte: 52 } })
+        .select("-_id restaurant_id name address");
 
     return res.json({ count: data.length, data }).end();
 });
-
-
-
 
 module.exports = {
     getAllRestaurants,
