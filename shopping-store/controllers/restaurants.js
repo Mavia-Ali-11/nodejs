@@ -154,6 +154,17 @@ const getAgainstRandomOptions = asyncHandler(async (req, res) => {
     return res.json({ count: data.length, data }).end();
 });
 
+const getAgainstSortedOrder = asyncHandler(async (req, res) => {
+    // 25. Write a MongoDB query to arrange the name of the restaurants in ascending order along with all the columns.
+    // const data = await Restaurant.find({}).sort("name");
+
+    // 26. Write a MongoDB query to arrange the name of the restaurants in descending along with all the columns.
+    const data = await Restaurant.find().sort("-name");
+
+    return res.json({ count: data.length, data }).end();
+});
+
+
 module.exports = {
     getAllRestaurants,
     getRestaurantsMeta,
@@ -161,5 +172,6 @@ module.exports = {
     getAgainstScores,
     getAgainstLocation,
     getAgainstSearch,
-    getAgainstRandomOptions
+    getAgainstRandomOptions,
+    getAgainstSortedOrder
 };
