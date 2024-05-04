@@ -162,11 +162,30 @@ const getAgainstSortedOrder = asyncHandler(async (req, res) => {
     // const data = await Restaurant.find().sort("-name");
 
     // 27. Write a MongoDB query to arranged the name of the cuisine in ascending order and for that same cuisine borough should be in descending order.
-    // const data = await Restaurant.find().sort("cuisine -borough");
+    const data = await Restaurant.find().sort("cuisine -borough");
 
+    return res.json({ count: data.length, data }).end();
+});
+
+const getAgainstConditions = asyncHandler(async (req, res) => {
     // 28. Write a MongoDB query to know whether all the addresses contains the street or not.
-    const data = await Restaurant.find({ "address.street": { $exists: true } });
-    
+    // const data = await Restaurant.find({ "address.street": { $exists: true } });
+
+    // 29. Write a MongoDB query which will select all documents in the restaurants collection where the coord field value is Double.
+    // const data = await Restaurant.find({ "address.coord": { $type: "double" } });
+
+    // 30. Write a MongoDB query which will select the restaurant Id, name and grades for those restaurants which returns 0 as a remainder after dividing the score by 7.
+    // const data = await Restaurant.find({ "grades.score": { $mod: [7, 0] } })
+    //     .select("-_id restaurant_id name grades");
+
+    // 31. Write a MongoDB query to find the restaurant name, borough, longitude and attitude and cuisine for those restaurants which contains 'mon' as three letters somewhere in its name.
+    // const data = await Restaurant.find({ name: /mon/i })
+    //     .select("-_id  name borough cuisine address.coord");
+
+    // 32. Write a MongoDB query to find the restaurant name, borough, longitude and latitude and cuisine for those restaurants which contain 'Mad' as first three letters of its name. (search text should be dynamic)
+    const data = await Restaurant.find({ name: { $regex: "^" + req.query.search } })
+        .select("-_id  name borough cuisine address.coord");
+
     return res.json({ count: data.length, data }).end();
 });
 
@@ -179,5 +198,6 @@ module.exports = {
     getAgainstLocation,
     getAgainstSearch,
     getAgainstRandomOptions,
-    getAgainstSortedOrder
+    getAgainstSortedOrder,
+    getAgainstConditions
 };
