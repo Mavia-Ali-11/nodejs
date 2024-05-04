@@ -8,7 +8,8 @@ const {
     getAgainstLocation,
     getAgainstSearch,
     getAgainstRandomOptions,
-    getAgainstSortedOrder
+    getAgainstSortedOrder,
+    getAgainstConditions
 } = require("../controllers/restaurants");
 
 router.get("/", getAllRestaurants);
@@ -19,5 +20,6 @@ router.get("/location", getAgainstLocation);
 router.get("/search", getAgainstSearch);
 router.get("/random-search", getAgainstRandomOptions);
 router.get("/sort", getAgainstSortedOrder);
+router.get("/conditions", getAgainstConditions);
 
 module.exports = router;
