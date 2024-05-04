@@ -159,7 +159,10 @@ const getAgainstSortedOrder = asyncHandler(async (req, res) => {
     // const data = await Restaurant.find({}).sort("name");
 
     // 26. Write a MongoDB query to arrange the name of the restaurants in descending along with all the columns.
-    const data = await Restaurant.find().sort("-name");
+    // const data = await Restaurant.find().sort("-name");
+
+    // 27. Write a MongoDB query to arranged the name of the cuisine in ascending order and for that same cuisine borough should be in descending order.
+    // const data = await Restaurant.find().sort("cuisine -borough");
 
     return res.json({ count: data.length, data }).end();
 });
