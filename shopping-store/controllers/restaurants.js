@@ -187,12 +187,36 @@ const getAgainstConditions = asyncHandler(async (req, res) => {
     //     .select("-_id  name borough cuisine address.coord");
 
     // 33. Write a MongoDB query to find the restaurants that have at least one grade with a score of less than 5.
-    const data = await Restaurant.find({ "grades.score": { $lt: 5 } });
+    // const data = await Restaurant.find({ "grades.score": { $lt: 5 } });
 
     // 34, 35, 36 are kind of similar to previous ones
 
+    // 37. Write a MongoDB query to find the restaurants that have at least one grade with a score of less than 5 and that are located in the borough of Manhattan or Brooklyn, and their cuisine is not American or Chinese.
+    // const data = await Restaurant.find({
+    //     "grades.score": { $lt: 5 },
+    //     $or: [
+    //         { borough: "Manhattan" },
+    //         { borough: "Brooklyn" }
+    //     ],
+    //     $nor: [
+    //         { cuisine: "American" },
+    //         { cuisine: "Chinese" }
+    //     ]
+    // });
 
-
+    // 38. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6.
+    // 39. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6 and are located in the borough of Manhattan.
+    // 40. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn.
+    const data = await Restaurant.find({
+        // $and: [
+        //     { "grades.score": 2 },
+        //     { "grades.score": 6 }
+        // ]
+        "grades.score": { $all: [2, 6] },
+        
+        borough: { $in: ["Manhattan", "Brooklyn"] } 
+    });
+    
 
     return res.json({ count: data.length, data }).end();
 });
