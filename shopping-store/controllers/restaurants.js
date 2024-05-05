@@ -225,20 +225,65 @@ const getAgainstConditions = asyncHandler(async (req, res) => {
     // 45. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn.
     // 46. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn, and their cuisine is not American.
     // 47. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn, and their cuisine is not American or Chinese.
-    const data = await Restaurant.find({
-        // $or: [
-        //     { "grades.score": 2 },
-        //     { "grades.score": 6 }
-        // ],
-        grades: { $elemMatch: { score: { $in: [2, 6] } } },
+    // const data = await Restaurant.find({
+    //     // $or: [
+    //     //     { "grades.score": 2 },
+    //     //     { "grades.score": 6 }
+    //     // ],
+    //     grades: { $elemMatch: { score: { $in: [2, 6] } } },
 
-        borough: { $nin: ["Manhattan", "Brooklyn"] },
-        cuisine: { $in: ["American", "Chinese"] }
+    //     borough: { $nin: ["Manhattan", "Brooklyn"] },
+    //     cuisine: { $in: ["American", "Chinese"] }
+    // });
+
+    // 48. Write a MongoDB query to find the restaurants that have all grades with a score greater than 5.
+    // 49. Write a MongoDB query to find the restaurants that have all grades with a score greater than 5 and are located in the borough of Manhattan.
+    // 50. Write a MongoDB query to find the restaurants that have all grades with a score greater than 5 and are located in the borough of Manhattan or Brooklyn.
+    const data = await Restaurant.find({
+        grades: { $not: { $elemMatch: { score: { $lte: 5 } } } },
+        borough: { $in: ["Manhattan", "Brooklyn"] },
     });
 
     return res.json({ count: data.length, data }).end();
 });
 
+
+const getStats = asyncHandler(async (req, res) => {
+    // 51. Write a MongoDB query to find the average score for each restaurant.
+    // 52. Write a MongoDB query to find the highest score for each restaurant.
+    // 53. Write a MongoDB query to find the lowest score for each restaurant.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $addFields: {
+    //             average_score: { $avg: "$grades.score" },
+    //             max_score: { $max: "$grades.score" },
+    //             min_score: { $min: "$grades.score" }
+    //         }
+    //     }
+    // ]);
+
+    // 54. Write a MongoDB query to find the count of restaurants in each borough.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $group: {
+    //             _id: "$borough",
+    //             num_of_restaurants: { $sum: 1 }
+    //         }
+    //     }
+    // ]);
+
+    // 55. Write a MongoDB query to find the count of restaurants for each cuisine.
+    const data = await Restaurant.aggregate([
+        {
+            $group: {
+                _id: "$cuisine",
+                num_of_restaurants: { $sum: 1 }
+            }
+        }
+    ]);
+
+    return res.json({ count: data.length, data }).end();
+});
 
 module.exports = {
     getAllRestaurants,
@@ -249,5 +294,6 @@ module.exports = {
     getAgainstSearch,
     getAgainstRandomOptions,
     getAgainstSortedOrder,
-    getAgainstConditions
+    getAgainstConditions,
+    getStats
 };
