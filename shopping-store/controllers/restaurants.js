@@ -207,16 +207,34 @@ const getAgainstConditions = asyncHandler(async (req, res) => {
     // 38. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6.
     // 39. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6 and are located in the borough of Manhattan.
     // 40. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn.
+    // 41. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn, and their cuisine is not American.
+    // 42. Write a MongoDB query to find the restaurants that have a grade with a score of 2 and a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn, and their cuisine is not American or Chinese.
+    // const data = await Restaurant.find({
+    //     // $and: [
+    //     //     { "grades.score": 2 },
+    //     //     { "grades.score": 6 }
+    //     // ]
+    //     "grades.score": { $all: [2, 6] },
+
+    //     borough: { $in: ["Manhattan", "Brooklyn"] },
+    //     cuisine: { $nin: ["American", "Chinese"] }
+    // });
+
+    // 43. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6.
+    // 44. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6 and are located in the borough of Manhattan.
+    // 45. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn.
+    // 46. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn, and their cuisine is not American.
+    // 47. Write a MongoDB query to find the restaurants that have a grade with a score of 2 or a grade with a score of 6 and are located in the borough of Manhattan or Brooklyn, and their cuisine is not American or Chinese.
     const data = await Restaurant.find({
-        // $and: [
+        // $or: [
         //     { "grades.score": 2 },
         //     { "grades.score": 6 }
-        // ]
-        "grades.score": { $all: [2, 6] },
-        
-        borough: { $in: ["Manhattan", "Brooklyn"] } 
+        // ],
+        grades: { $elemMatch: { score: { $in: [2, 6] } } },
+
+        borough: { $nin: ["Manhattan", "Brooklyn"] },
+        cuisine: { $in: ["American", "Chinese"] }
     });
-    
 
     return res.json({ count: data.length, data }).end();
 });
