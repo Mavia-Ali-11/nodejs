@@ -273,12 +273,68 @@ const getStats = asyncHandler(async (req, res) => {
     // ]);
 
     // 55. Write a MongoDB query to find the count of restaurants for each cuisine.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $group: {
+    //             _id: "$cuisine",
+    //             num_of_restaurants: { $sum: 1 }
+    //         }
+    //     }
+    // ]);
+
+    // 56. Write a MongoDB query to find the count of restaurants for each cuisine and borough.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $group: {
+    //             _id: {
+    //                 borough: "$borough",
+    //                 cuisine: "$cuisine"
+    //             },
+    //             num_of_restaurants: { $sum: 1 }
+    //         }
+    //     },
+    //     { $sort: { "_id.borough": 1 } }
+    // ]);
+
+    // 57. Write a MongoDB query to find the count of restaurants that received a grade of 'A' for each cuisine.
+    // 58. Write a MongoDB query to find the count of restaurants that received a grade of 'A' for each borough.
+    // 59. Write a MongoDB query to find the count of restaurants that received a grade of 'A' for each cuisine and borough.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $match: { "grades.grade": "A" }
+    //     },
+    //     {
+    //         $group: {
+    //             // _id: "$cuisine", // 57
+    //             // _id: "$borough", // 58
+    //             _id: {              // 59
+    //                 borough: "$borough",
+    //                 cuisine: "$cuisine",
+    //             },
+    //             num_of_restaurants: { $sum: 1 }
+    //         }
+    //     },
+    //     {
+    //         $sort: { "_id.borough": 1, "_id.cuisine": 1 }
+    //     }
+    // ]);
+
+    // 60. Write a MongoDB query to find the number of restaurants that have been graded in each month of the year.
     const data = await Restaurant.aggregate([
         {
+            $unwind: "$grades"
+        },
+        {
             $group: {
-                _id: "$cuisine",
+                _id: {
+                    month: { $month: { $toDate: "$grades.date" } },
+                    year: { $year: { $toDate: "$grades.date" } }
+                },
                 num_of_restaurants: { $sum: 1 }
             }
+        },
+        {
+            $sort: { "_id.year": 1, "_id.month": 1 }
         }
     ]);
 
