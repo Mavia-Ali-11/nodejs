@@ -320,21 +320,47 @@ const getStats = asyncHandler(async (req, res) => {
     // ]);
 
     // 60. Write a MongoDB query to find the number of restaurants that have been graded in each month of the year.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $unwind: "$grades"
+    //     },
+    //     {
+    //         $group: {
+    //             _id: {
+    //                 month: { $month: { $toDate: "$grades.date" } },
+    //                 year: { $year: { $toDate: "$grades.date" } }
+    //             },
+    //             num_of_restaurants: { $sum: 1 }
+    //         }
+    //     },
+    //     {
+    //         $sort: { "_id.year": 1, "_id.month": 1 }
+    //     }
+    // ]);
+
+    // 61. Write a MongoDB query to find the average score for each cuisine.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $unwind: "$grades"
+    //     },
+    //     {
+    //         $group: {
+    //             _id: "$cuisine",
+    //             average_score:  { $avg: "$grades.score" },
+    //         }
+    //     }
+    // ]);
+
+    // 62. Write a MongoDB query to find the highest score for each cuisine.
     const data = await Restaurant.aggregate([
         {
             $unwind: "$grades"
         },
         {
             $group: {
-                _id: {
-                    month: { $month: { $toDate: "$grades.date" } },
-                    year: { $year: { $toDate: "$grades.date" } }
-                },
-                num_of_restaurants: { $sum: 1 }
+                _id: "$cuisine",
+                maximum_score:  { $max: "$grades.score" },
             }
-        },
-        {
-            $sort: { "_id.year": 1, "_id.month": 1 }
         }
     ]);
 
