@@ -356,18 +356,28 @@ const getStats = asyncHandler(async (req, res) => {
     // 63. Write a MongoDB query to find the lowest score for each cuisine.
     // 65. Write a MongoDB query to find the highest score for each borough.
     // 66. Write a MongoDB query to find the lowest score for each borough.
-    const data = await Restaurant.aggregate([
-        {
-            $unwind: "$grades"
-        },
-        {
-            $group: {
-                _id: "$cuisine",
-                maximum_score:  { $max: "$grades.score" },
-                // minimum_score:  { $min: "$grades.score" },
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $unwind: "$grades"
+    //     },
+    //     {
+    //         $group: {
+    //             _id: "$cuisine",
+    //             maximum_score:  { $max: "$grades.score" },
+    //             // minimum_score:  { $min: "$grades.score" },
+    //         }
+    //     }
+    // ]);
+
+    // 67. Write a MongoDB query to find the name and address of the restaurants that received a grade of 'A' on a specific date.
+    const data = await Restaurant.find({
+        grades: {
+            $elemMatch: {
+                grade: "A",
+                date: new Date("2013-07-22T00:00:00.000+00:00")
             }
         }
-    ]);
+    });
 
     return res.json({ count: data.length, data }).end();
 });
