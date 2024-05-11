@@ -381,7 +381,95 @@ const getStats = asyncHandler(async (req, res) => {
     // });
 
     // 69. Write a MongoDB query to find the name and address of the restaurants that have at least one 'A' grade and one 'B' grade.
-    const data = Restaurant.find({ "grades.grade": { $all: ["A", "B"] } });
+    // const data = await Restaurant.find({ "grades.grade": { $all: ["A", "B"] } }).select("name address");
+
+    // 70. Write a MongoDB query to find the name and address of the restaurants that have at least one 'A' grade and no 'B' grades.
+    // 71. Write a MongoDB query to find the name ,address and grades of the restaurants that have at least one 'A' grade and no 'C' grades.
+    // const data = await Restaurant.find({
+    //     $and: [
+    //         { "grades.grade": "A" },
+    //         { "grades.grade": { $not: { $eq: "B" } } }
+    //     ]
+    // }).select("name address grades.grade");
+
+    // 72. Write a MongoDB query to find the name, address, and grades of the restaurants that have at least one 'A' grade, no 'B' grades, and no 'C' grades.
+    // const data = await Restaurant.find({
+    //     $and: [
+    //         { "grades.grade": "A" },
+    //         { "grades.grade": { $nin: ["B", "C"] } }
+    //     ]
+    // }).select("name address grades.grade");
+
+    // 73. Write a MongoDB query to find the name and address of the restaurants that have the word 'coffee' in their name.
+    // const data = await Restaurant.find({ name: /coffee/i }).select("name address");
+
+    // 74. Write a MongoDB query to find the name and address of the restaurants that have a zipcode that starts with '10'.
+    // const data = await Restaurant.find({ "address.zipcode": /^10/i }).select("name address");
+
+    // 75. Write a MongoDB query to find the name and address of the restaurants that have a cuisine that starts with the letter 'B'.
+    // const data = await Restaurant.find({ cuisine: /^B/ }).select("name address");
+
+    // 76. Write a MongoDB query to find the name, address, and cuisine of the restaurants that have a cuisine that ends with the letter 'y'.
+    // const data = await Restaurant.find({ cuisine: /y$/i }).select("name address cuisine");
+
+    // 77. Write a MongoDB query to find the name, address, and cuisine of the restaurants that have a cuisine that contains the word 'Pizza'.
+    // const data = await Restaurant.find({ cuisine: /Pizza/ }).select("name address cuisine");
+
+    // 78. Write a MongoDB query to find the restaurants achieved highest average score.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $addFields: { average_score: { $avg: "$grades.score" } }
+    //     },
+    //     {
+    //         $sort: { average_score: -1 }
+    //     },
+    //     {
+    //         $limit: 1
+    //     },
+    //     {
+    //         $project: {
+    //             _id: 0,
+    //             restaurant_id: 1,
+    //             name: 1,
+    //             average_score: 1
+    //         }
+    //     }
+    // ]);
+
+
+    // 79. Write a MongoDB query to find all the restaurants with the highest number of "A" grades.
+    const data = await Restaurant.aggregate([
+        { $unwind: "$grades" },
+        { $match: { "grades.grade": "A" } },
+        {
+            $group: {
+                _id: "$restaurant_id",
+                name: { $first: "$name" },
+                numOfAGrades: { $sum: 1 }
+            }
+        },
+        {
+            $group: {
+                _id: "$numOfAGrades",
+                restaurants: {
+                    $addToSet: {
+                        name: "$name",
+                        restaurant_id: "$_id"
+                    }
+                }
+            }
+        },
+        { $sort: { _id: -1 } },
+        { $limit: 1 },
+        {
+            $project: {
+                _id: 0,
+                numOfAGrades: "$_id",
+                numOfRestaurants: { $size: "$restaurants" },
+                restaurants: "$restaurants",
+            }
+        }
+    ]);
 
     return res.json({ count: data.length, data }).end();
 });
