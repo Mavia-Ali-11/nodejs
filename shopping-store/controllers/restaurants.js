@@ -370,14 +370,18 @@ const getStats = asyncHandler(async (req, res) => {
     // ]);
 
     // 67. Write a MongoDB query to find the name and address of the restaurants that received a grade of 'A' on a specific date.
-    const data = await Restaurant.find({
-        grades: {
-            $elemMatch: {
-                grade: "A",
-                date: new Date("2013-07-22T00:00:00.000+00:00")
-            }
-        }
-    });
+    // 68. Write a MongoDB query to find the name and address of the restaurants that received a grade of 'B' or 'C' on a specific date.
+    // const data = await Restaurant.find({
+    //     grades: {
+    //         $elemMatch: {
+    //             grade: ["B", "C"],
+    //             date: new Date("2013-07-22T00:00:00.000+00:00")
+    //         }
+    //     }
+    // });
+
+    // 69. Write a MongoDB query to find the name and address of the restaurants that have at least one 'A' grade and one 'B' grade.
+    const data = Restaurant.find({ "grades.grade": { $all: ["A", "B"] } });
 
     return res.json({ count: data.length, data }).end();
 });
