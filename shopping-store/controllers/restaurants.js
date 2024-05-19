@@ -436,8 +436,139 @@ const getStats = asyncHandler(async (req, res) => {
     //     }
     // ]);
 
-
     // 79. Write a MongoDB query to find all the restaurants with the highest number of "A" grades.
+    // const data = await Restaurant.aggregate([
+    //     { $unwind: "$grades" },
+    //     { $match: { "grades.grade": "A" } },
+    //     {
+    //         $group: {
+    //             _id: "$restaurant_id",
+    //             name: { $first: "$name" },
+    //             numOfAGrades: { $sum: 1 }
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: "$numOfAGrades",
+    //             restaurants: {
+    //                 $addToSet: {
+    //                     name: "$name",
+    //                     restaurant_id: "$_id"
+    //                 }
+    //             }
+    //         }
+    //     },
+    //     { $sort: { _id: -1 } },
+    //     { $limit: 1 },
+    //     {
+    //         $project: {
+    //             _id: 0,
+    //             numOfAGrades: "$_id",
+    //             numOfRestaurants: { $size: "$restaurants" },
+    //             restaurants: "$restaurants",
+    //         }
+    //     }
+    // ]);
+
+    // 80. Write a MongoDB query to find the cuisine type that is most likely to receive a "C" grade.
+    // const data = await Restaurant.aggregate([
+    //     { $unwind: "$grades" },
+    //     { $match: { "grades.grade": "C" } },
+    //     {
+    //         $group: {
+    //             _id: "$cuisine",
+    //             numOfCGrades: { $sum: 1 }
+    //         }
+    //     },
+    //     { $sort: { numOfCGrades: -1 } },
+    //     {
+    //         $project: {
+    //             _id: 0,
+    //             cuisine: "$_id",
+    //             numOfCGrades: 1
+    //         }
+    //     }
+    // ]);
+
+    // 81. Write a MongoDB query to find the restaurant that has the highest average score for the cuisine "Turkish".
+    // const data = await Restaurant.aggregate([
+    //     { $unwind: "$grades" },
+    //     { $match: { cuisine: "Turkish" } },
+    //     {
+    //         $group: {
+    //             _id: "$cuisine",
+    //             averageScore: { $avg: "$grades.score" }
+    //         }
+    //     }
+    // ]);
+
+    // 82. Write a MongoDB query to find the restaurants that achieved the highest total score.
+    // const data = await Restaurant.aggregate([
+    //     { $unwind: "$grades" },
+    //     {
+    //         $group: {
+    //             _id: "$name",
+    //             totalScore: { $sum: "$grades.score" }
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: "$totalScore",
+    //             restaurants: { $push: "$_id" }
+    //         }
+    //     },
+    //     {
+    //         $project: {
+    //             _id: 0,
+    //             restaurants: 1,
+    //             totalScore: "$_id",
+    //         }
+    //     },
+    //     { $sort: { totalScore: -1 } },
+    //     { $limit: 1 }
+    // ]);
+
+    // 83. Write a MongoDB query to find all the Chinese restaurants in Brooklyn.
+    // const data = await Restaurant.find({ cuisine: "Chinese", borough: "Brooklyn" });
+
+    // 84. Write a MongoDB query to find the restaurant with the most recent grade date.
+    // const data = await Restaurant.find({}).sort("-grades.date").select("name grades.date").limit(1);
+
+    // 85. Write a MongoDB query to find the top 5 restaurants with the highest average score for each cuisine type, along with their average scores.
+    // const data = await Restaurant.aggregate([
+    //     {
+    //         $group: {
+    //             _id: "$cuisine",
+    //             restaurants: {
+    //                 $push: {
+    //                     restaurant_id: "$restaurant_id",
+    //                     name: "$name",
+    //                     averageScore: { $avg: "$grades.score" },
+    //                 }
+    //             }
+    //         }
+    //     },
+    //     {
+    //         $project: {
+    //             _id: 0,
+    //             cuisine: "$_id",
+    //             restaurants: {
+    //                 $slice: [
+    //                     {
+    //                         $sortArray: {
+    //                             input: "$restaurants",
+    //                             sortBy: { averageScore: -1 }
+    //                         }
+    //                     },
+    //                     5
+    //                 ]
+    //             }
+    //         }
+    //     },
+    //     { $sort: { cuisine: 1 } },
+    // ]);
+
+    // 86. Write a MongoDB query to find the top 5 restaurants in each borough with the highest number of "A" grades.
     const data = await Restaurant.aggregate([
         { $unwind: "$grades" },
         { $match: { "grades.grade": "A" } },
@@ -445,28 +576,36 @@ const getStats = asyncHandler(async (req, res) => {
             $group: {
                 _id: "$restaurant_id",
                 name: { $first: "$name" },
-                numOfAGrades: { $sum: 1 }
+                borough: { $first: "$borough" },
+                numberOfAGrades: { $sum: 1 }
             }
         },
         {
             $group: {
-                _id: "$numOfAGrades",
+                _id: "$borough",
                 restaurants: {
-                    $addToSet: {
+                    $push: {
                         name: "$name",
-                        restaurant_id: "$_id"
+                        numberOfAGrades: "$numberOfAGrades"
                     }
-                }
+                },
             }
         },
-        { $sort: { _id: -1 } },
-        { $limit: 1 },
         {
             $project: {
                 _id: 0,
-                numOfAGrades: "$_id",
-                numOfRestaurants: { $size: "$restaurants" },
-                restaurants: "$restaurants",
+                borough: "$_id",
+                restaurants: {
+                    $slice: [
+                        {
+                            $sortArray: {
+                                input: "$restaurants",
+                                sortBy: { numberOfAGrades: -1 }
+                            }
+                        },
+                        5
+                    ]
+                }
             }
         }
     ]);
